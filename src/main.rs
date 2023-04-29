@@ -13,6 +13,7 @@ async fn main() -> Result<(), GooseError> {
         .register_scenario(scenario!("Load_Java_Mandel_5000").register_transaction(transaction!(java_mandel_5000)))
         .register_scenario(scenario!("Load_Java_Mandel_256_400_800_NoMemory").register_transaction(transaction!(java_mandel_256_hw_nomemory)))
         .register_scenario(scenario!("Load_Java_Mandel_256_400_800_Memory").register_transaction(transaction!(java_mandel_256_hw_memory)))
+        .register_scenario(scenario!("Load_Python_Mandel_256_400_800_Memory").register_transaction(transaction!(python_mandel_256_hw_memory)))
         .execute()
         .await?;
 
@@ -104,6 +105,16 @@ async fn java_mandel_256_hw_nomemory(user: &mut GooseUser) -> TransactionResult 
 
 async fn java_mandel_256_hw_memory(user: &mut GooseUser) -> TransactionResult {
     let goose_metrics = user.get("mandel_java/mandel_text_memory/256/400/800").await?;
+
+    let validate = &Validate::builder().status(200).build();
+
+    validate_and_load_static_assets(user, goose_metrics, &validate).await?;
+
+    Ok(())
+}
+
+async fn python_mandel_256_hw_memory(user: &mut GooseUser) -> TransactionResult {
+    let goose_metrics = user.get("mandel_python/mandel_text_memory/256/400/800").await?;
 
     let validate = &Validate::builder().status(200).build();
 
